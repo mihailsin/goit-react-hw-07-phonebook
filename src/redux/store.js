@@ -1,22 +1,24 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { rootReducer } from './reducers';
-import {
-  persistStore,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist';
+import { filterSlice } from './filter-slice';
+// import { rootReducer } from './reducers';
+import { contactsApi } from './contactsApi';
+
+// const store = configureStore({
+//   reducer: rootReducer,
+// });
 
 const store = configureStore({
-  reducer: rootReducer,
-  middleware: getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    },
-  }),
+  reducer: {
+    // Add the generated reducer as a specific top-level slice
+    [contactsApi.reducerPath]: contactsApi.reducer,
+    filter: filterSlice.reducer,
+  },
+  // Adding the api middleware enables caching, invalidation, polling,
+  // and other useful features of `rtk-query`.
+  middleware: getDefaultMiddleware => [
+    ...getDefaultMiddleware(),
+    contactsApi.middleware,
+  ],
 });
-const persistor = persistStore(store);
-export { store, persistor };
+
+export { store };

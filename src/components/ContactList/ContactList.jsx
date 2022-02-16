@@ -1,36 +1,53 @@
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  useGetContactsQuery,
+  useDeleteContactMutation,
+  contactsApi,
+} from 'redux/contactsApi';
 import { remove } from '../../redux/items-slice';
 import { ImBin2 } from 'react-icons/im';
 import { List, Item, Button } from './ContactList.styled';
 
 const ContactList = () => {
-  const items = useSelector(state => state.contacts.items);
+  const { data, error, isFetching } = useGetContactsQuery();
+  const [deleteContact] = useDeleteContactMutation();
 
-  const filterValue = useSelector(state => state.contacts.filter);
+  console.log(data);
+
+  // const items = useSelector(state => state.contacts.items);
+
+  const filterValue = useSelector(state => state.filter);
   const dispatch = useDispatch();
 
   const filterContacts = () => {
-    const normalizedContacts = filterValue.toLowerCase();
-    return items.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedContacts)
-    );
+    if (data) {
+      const normalizedContacts = filterValue.toLowerCase();
+      return data.filter(contact =>
+        contact.name.toLowerCase().includes(normalizedContacts)
+      );
+    }
   };
 
   const filteredContacts = filterContacts();
 
   return (
-    <List>
-      {filteredContacts.map(({ name, number, id }) => {
-        return (
-          <Item key={id}>
-            {name} : {number}
-            <Button onClick={() => dispatch(remove(id))} type="button">
-              <ImBin2 />
-            </Button>
-          </Item>
-        );
-      })}
-    </List>
+    <>
+      {isFetching && <h2>Loading...</h2>}
+      {data && (
+        <List>
+          {filteredContacts.map(({ name, phone, id }) => {
+            return (
+              <Item key={id}>
+                {name} : {phone}
+                <Button type="button" onClick={() => deleteContact(id)}>
+                  <ImBin2 />
+                </Button>
+              </Item>
+            );
+          })}
+        </List>
+      )}
+    </>
   );
 };
 

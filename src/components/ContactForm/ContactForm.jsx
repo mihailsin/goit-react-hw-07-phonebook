@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { add } from 'redux/items-slice';
 import { nanoid } from 'nanoid';
 import { Form, Label, Input, Button, Wrapper } from './ContactForm.styled';
+import { useAddContactMutation } from 'redux/contactsApi';
 
 const ContactForm = () => {
-  const items = useSelector(state => state.contacts.items);
-  const dispatch = useDispatch();
+  // const items = useSelector(state => state.contacts.items);
+  // const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const [addContact] = useAddContactMutation();
 
   const nameInputId = nanoid(7);
   const numberInputid = nanoid(7);
@@ -17,6 +20,7 @@ const ContactForm = () => {
     if (e.target.name === 'name') {
       setName(e.target.value);
     } else setNumber(e.target.value);
+    console.log(name, number);
   };
 
   const resetFormFields = () => {
@@ -24,20 +28,18 @@ const ContactForm = () => {
     setNumber('');
   };
 
-  const contactNamesMatched = array => {
-    const normalizedNames = array.map(item => item.name.toLowerCase());
-    if (normalizedNames.includes(name.toLowerCase())) {
-      alert(`${name} is already in contacts`);
-      return true;
-    }
-  };
+  // const contactNamesMatched = array => {
+  //   const normalizedNames = array.map(item => item.name.toLowerCase());
+  //   if (normalizedNames.includes(name.toLowerCase())) {
+  //     alert(`${name} is already in contacts`);
+  //     return true;
+  //   }
+  // };
 
   const submitHandler = e => {
     e.preventDefault();
+    addContact({ name, number });
     resetFormFields();
-    if (contactNamesMatched(items)) {
-      return;
-    } else dispatch(add({ name, number, id: nanoid(10) }));
   };
 
   return (

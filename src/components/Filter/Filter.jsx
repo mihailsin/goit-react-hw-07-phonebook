@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Label, Input, Wrapper } from '../ContactForm/ContactForm.styled';
 const Filter = () => {
   const filterInputId = nanoid(7);
-  const filterValue = useSelector(state => state.contacts.filter);
+  const filterValue = useSelector(state => state.filter);
   const dispatch = useDispatch();
   return (
     <Wrapper>
