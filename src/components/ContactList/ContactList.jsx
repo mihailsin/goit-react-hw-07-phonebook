@@ -1,50 +1,31 @@
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  useGetContactsQuery,
-  useDeleteContactMutation,
-  contactsApi,
-} from 'redux/contactsApi';
-import { remove } from '../../redux/items-slice';
+import { useSelector } from 'react-redux';
+import { useGetContactsQuery } from 'redux/contactsApi';
 import { ImBin2 } from 'react-icons/im';
-import { List, Item, Button } from './ContactList.styled';
+import { List } from './ContactList.styled';
+import ContactItem from 'components/ContactItem';
 
 const ContactList = () => {
   const { data, error, isFetching } = useGetContactsQuery();
-  const [deleteContact] = useDeleteContactMutation();
-
-  console.log(data);
-
-  // const items = useSelector(state => state.contacts.items);
-
-  const filterValue = useSelector(state => state.filter);
-  const dispatch = useDispatch();
+  const filterValue = useSelector(({ filter }) => filter);
 
   const filterContacts = () => {
     if (data) {
       const normalizedContacts = filterValue.toLowerCase();
-      return data.filter(contact =>
-        contact.name.toLowerCase().includes(normalizedContacts)
+      return data.filter(({ name }) =>
+        name.toLowerCase().includes(normalizedContacts)
       );
     }
   };
 
   const filteredContacts = filterContacts();
-
   return (
     <>
       {isFetching && <h2>Loading...</h2>}
       {data && (
         <List>
-          {filteredContacts.map(({ name, phone, id }) => {
-            return (
-              <Item key={id}>
-                {name} : {phone}
-                <Button type="button" onClick={() => deleteContact(id)}>
-                  <ImBin2 />
-                </Button>
-              </Item>
-            );
-          })}
+          {filteredContacts.map(contact => (
+            <ContactItem key={contact.id} {...contact} />
+          ))}
         </List>
       )}
     </>
