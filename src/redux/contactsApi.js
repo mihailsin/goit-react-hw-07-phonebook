@@ -25,7 +25,6 @@ export const contactsApi = createApi({
       invalidatesTags: ['contacts'],
     }),
     deleteContact: builder.mutation({
-      // note: an optional `queryFn` may be used in place of `query`
       query: id => ({
         url: `contacts/${id}`,
         method: 'DELETE',
