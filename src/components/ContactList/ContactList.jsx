@@ -1,11 +1,11 @@
 import { useSelector } from 'react-redux';
 import { useGetContactsQuery } from 'redux/contactsApi';
-import { ImBin2 } from 'react-icons/im';
 import { List } from './ContactList.styled';
+import CircularProgress from '@mui/material/CircularProgress';
 import ContactItem from 'components/ContactItem';
 
 const ContactList = () => {
-  const { data, error, isFetching } = useGetContactsQuery();
+  const { data, isLoading } = useGetContactsQuery();
   const filterValue = useSelector(({ filter }) => filter);
 
   const filterContacts = () => {
@@ -20,7 +20,12 @@ const ContactList = () => {
   const filteredContacts = filterContacts();
   return (
     <>
-      {isFetching && <h2>Loading...</h2>}
+      {isLoading && (
+        <h3>
+          Fetching contacts
+          <CircularProgress color="inherit" size={18} />
+        </h3>
+      )}
       {data && (
         <List>
           {filteredContacts.map(contact => (

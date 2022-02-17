@@ -3,13 +3,13 @@ import { useGetContactsQuery } from 'redux/contactsApi';
 import { nanoid } from 'nanoid';
 import { Form, Label, Input, Button, Wrapper } from './ContactForm.styled';
 import { useAddContactMutation } from 'redux/contactsApi';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ContactForm = () => {
+  const [addContact] = useAddContactMutation();
+  const { data } = useGetContactsQuery();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
-  const { data } = useGetContactsQuery();
-  const [addContact] = useAddContactMutation();
 
   const nameInputId = nanoid(7);
   const numberInputid = nanoid(7);
@@ -28,7 +28,7 @@ const ContactForm = () => {
   const contactsNamesMatched = array => {
     const normalizedNames = array.map(item => item.name.toLowerCase());
     if (normalizedNames.includes(name.toLowerCase())) {
-      alert(`${name} is already in contacts`);
+      toast.error(`${name} already in the phonebook!`);
       return true;
     }
   };
@@ -37,9 +37,17 @@ const ContactForm = () => {
     e.preventDefault();
     resetFormFields();
     if (contactsNamesMatched(data)) return;
-    else addContact({ name, number });
+    else {
+      addContact({ name, number })
+        .unwrap()
+        .then(() => toast.success(`${name} added to your phonebook!`))
+        .catch(error =>
+          toast.error(
+            `POST request threw an error! ${error.status}: ${error.data}`
+          )
+        );
+    }
   };
-
   return (
     <Form onSubmit={submitHandler}>
       <Wrapper>
