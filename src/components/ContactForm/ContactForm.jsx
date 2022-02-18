@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { useGetContactsQuery } from 'redux/contactsApi';
+import { useGetContactsQuery, useAddContactMutation } from 'redux/contactsApi';
 import { nanoid } from 'nanoid';
-import { Form, Label, Input, Button, Wrapper } from './ContactForm.styled';
-import { useAddContactMutation } from 'redux/contactsApi';
 import { toast } from 'react-toastify';
+import { Form, Label, Input, Button, Wrapper } from './ContactForm.styled';
 import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from '@mui/material/CircularProgress';
+
 const ContactForm = () => {
-  const [addContact] = useAddContactMutation();
+  const [addContact, { isLoading }] = useAddContactMutation();
   const { data } = useGetContactsQuery();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -73,7 +74,14 @@ const ContactForm = () => {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
         />
-        <Button type="submit">Add Contact</Button>
+        {isLoading ? (
+          <Button type="submit" disabled>
+            Adding contact &nbsp;
+            <CircularProgress color="inherit" size={12} />
+          </Button>
+        ) : (
+          <Button type="submit">Add Contact</Button>
+        )}
       </Wrapper>
     </Form>
   );

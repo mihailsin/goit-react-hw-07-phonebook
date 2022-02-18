@@ -1,8 +1,8 @@
 import { React } from 'react';
+import { ToastContainer } from 'react-toastify';
 import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
 import Filter from './components/Filter';
-import { ToastContainer } from 'react-toastify';
 
 import './App.css';
 import { Grid, GridContainer } from './App.styled';

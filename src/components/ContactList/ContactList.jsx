@@ -22,7 +22,7 @@ const ContactList = () => {
     <>
       {isLoading && (
         <h3>
-          Fetching contacts
+          Fetching contacts &nbsp;
           <CircularProgress color="inherit" size={18} />
         </h3>
       )}

@@ -1,27 +1,29 @@
-import { Item, Button } from './ContactItem.styled';
+import { useDeleteContactMutation } from 'redux/contactsApi';
 import { ImBin2 } from 'react-icons/im';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useDeleteContactMutation } from 'redux/contactsApi';
 import { toast } from 'react-toastify';
+import { Item, Button } from './ContactItem.styled';
 
 const ContactItem = ({ name, phone, id }) => {
   const [deleteContact, { isLoading: isDeleting }] = useDeleteContactMutation();
+
+  const deleteContactHandler = id => {
+    deleteContact(id)
+      .unwrap()
+      .then(() => toast.success(`${name} deleted from your phonebook`))
+      .catch(error =>
+        toast.error(
+          `DELETE request threw an error! ${error.status}: ${error.data}`
+        )
+      );
+  };
 
   return (
     <Item>
       {name} : {phone}
       <Button
         type="button"
-        onClick={() =>
-          deleteContact(id)
-            .unwrap()
-            .then(() => toast.success(`${name} deleted from your phonebook`))
-            .catch(error =>
-              toast.error(
-                `DELETE request threw an error! ${error.status}: ${error.data}`
-              )
-            )
-        }
+        onClick={() => deleteContactHandler(id)}
         disabled={isDeleting}
       >
         {isDeleting ? (
